@@ -13,7 +13,7 @@ module.exports = {
     console.log(guild)
     const newGuild = new Guild({
       'name' : guild.name,
-      'guildId' : guild.id,
+      'id' : guild.id,
       'members' : []
     })
     await newGuild.save()

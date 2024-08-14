@@ -2,6 +2,8 @@ import { Client } from "discord.js";
 import { config } from "./config";
 import { commands } from "./commands";
 import { deployCommands } from "./deploy-commands";
+import { User, Guild } from "./models";
+import mongoose from "mongoose";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
@@ -12,7 +14,13 @@ client.once("ready", () => {
 });
 
 client.on("guildCreate", async (guild) => {
+	const newGuild = new Guild({ _id : guild.id, name : guild.name });
+	await newGuild.save();
   await deployCommands({ guildId: guild.id });
+});
+
+client.on("guildDelete", async (guild) => {
+  // await Guild.deleteOne({ _id: guild.id });
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -25,4 +33,10 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.login(config.DISCORD_TOKEN);
+mongoose
+	.connect(config.MONGODB_CONNECT)
+	.then(() => {
+		client.login(config.DISCORD_TOKEN);
+	})
+
+

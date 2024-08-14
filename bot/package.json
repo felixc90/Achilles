@@ -1,14 +1,15 @@
 {
   "scripts": {
-		"dev": "tsx watch index.ts",
-		"start": "node index.js",
-		"build": "tsup index.ts --minify"
-	},
-	"dependencies": {
+    "build": "tsc --incremental",
+    "start": "npm run build && nodemon ./dist/index.js"
+  },
+  "dependencies": {
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.5.3"
   },
   "devDependencies": {
+    "@types/request": "^2.48.12",
     "tsup": "^8.2.4",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
