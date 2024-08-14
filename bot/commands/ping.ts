@@ -11,8 +11,8 @@ export async function execute(interaction: CommandInteraction) {
 	const user = await User.findById(interaction.user.id);
 	const stravaApi = new StravaService(user?.accessToken);
 
-	stravaApi.getAthleteActivities();
-
+	const data = await stravaApi.getAthleteActivities();
+	console.log(data);
 
   return interaction.reply("Pong!");
 }

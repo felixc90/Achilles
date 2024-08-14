@@ -54,8 +54,8 @@ export class StravaService {
 				body: body ? typeof body === "string" ? body : JSON.stringify(body) : undefined
 			};
 
-			const res = fetch(fullUrl, opts);
-			return res as Promise<TReturnType>;
+			const res = await fetch(fullUrl, opts);
+			return res.json() as Promise<TReturnType>;
 		} catch (error) {
 			console.error('Error: ' + error);
 			return null as TReturnType;
