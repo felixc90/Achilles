@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Guild, User } from "../models";
+import { Guild, User } from "../../db";
 import { StravaService } from "../services/strava";
 
 export const data = new SlashCommandBuilder()

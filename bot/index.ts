@@ -2,8 +2,7 @@ import { Client } from "discord.js";
 import { config } from "./config";
 import { commands } from "./commands";
 import { deployCommands } from "./deploy-commands";
-import { User, Guild } from "./models";
-import mongoose from "mongoose";
+import { User, Guild } from "../db";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
@@ -33,10 +32,6 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-mongoose
-	.connect(config.MONGODB_CONNECT)
-	.then(() => {
-		client.login(config.DISCORD_TOKEN);
-	})
+client.login(config.DISCORD_TOKEN);
 
 

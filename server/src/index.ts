@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { config } from './config';
 import { User, Guild } from '../models';
-import mongoose from 'mongoose';
 
 const app = express();
 
@@ -28,23 +27,23 @@ app.get('/callback/:guildId/:userId', async (req: Request, res: Response) => {
 	};
 
 	const result = await fetch('https://www.strava.com/oauth/token', authOptions);
-	const json = res.json();
+	const json = await result.json();
 
 	if (result.ok) {
-		// const user = new User({
-		// 	_id: req.params.userId,
-		// 	firstName: body.athlete.firstname,
-		// 	lastName: body.athlete.lastname,
-		// 	profile: body.athlete.profile,
-		// 	accessToken: {
-		// 		accessToken: body.access_token,
-		// 		refreshToken: body.refresh_token,
-		// 		expiresAt: body.expires_at,
-		// 		tokenType: body.token_type,
-		// 		expiresIn: body.expires_in,
-		// 	}
-		// })
-		// await user.save();
+		const user = new User({
+			_id: req.params.userId,
+			firstName: json.athlete.firstname,
+			lastName: json.athlete.lastname,
+			profile: json.athlete.profile,
+			accessToken: {
+				accessToken: json.access_token,
+				refreshToken: json.refresh_token,
+				expiresAt: json.expires_at,
+				tokenType: json.token_type,
+				expiresIn: json.expires_in,
+			}
+		})
+		await user.save();
 
 		let guild = await Guild.findOne({ _id : req.params.guildId });
 		if (guild != null && !guild.members.includes(req.params.userId)) {
@@ -56,12 +55,6 @@ app.get('/callback/:guildId/:userId', async (req: Request, res: Response) => {
 	res.json({ message : 'Hello World' })
 });
 
-
-
-mongoose
-	.connect(config.MONGODB_CONNECT)
-	.then(() => {
-		app.listen(port, () => {
-			console.log(`Server is running on http://localhost:${port}`);
-		});
-	})
+app.listen(port, () => {
+	console.log(`Server is running on http://localhost:${port}`);
+});
