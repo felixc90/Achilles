@@ -1,7 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const schema = new Schema({
-	_id : String,
+export interface IGuild extends Document {
+  _id : string,
+	name : string,
+	members: string[]
+};
+
+export const GuildSchema = new Schema({
+  _id : String,
 	name : String,
 	members: {
 		type: [String],
@@ -9,4 +15,5 @@ const schema = new Schema({
 	}
 });
 
-export default mongoose.model('Guild', schema);
+const Guild = mongoose.model<IGuild>('Guild', GuildSchema);
+export default Guild;

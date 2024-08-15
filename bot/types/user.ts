@@ -1,14 +1,9 @@
-export interface IUser {
+export interface LeaderboardUser {
 	_id: string,
-	athleteId: string,
-	firstName: string,
-	lastName: string,
-	profile: string,
-	accessToken: {
-		accessToken: string
-		refreshToken: string
-		expiresAt: Number
-		expiresIn: Number
-		tokenType: string
-	}
+	firstName?: string,
+	lastName?: string,
+	username?: string
+	profile?: string,
+	distance: number,
+	time: number, 
 }

@@ -1,8 +1,7 @@
 import { config } from "../config";
-import { AccessToken } from "../types";
-import { Activity } from "../types/strava";
+import { AccessToken, Activity,  } from "../types";
 import { StravaService } from "./strava";
-import { Run, User } from "../../db";
+import { Run } from '../../db';
 
 export class UserService {
 
@@ -35,8 +34,7 @@ export class UserService {
 						country: run.location_country
 					}
 				});
-				console.log(run.athlete.id, run.name);
-
+				
 				return {
 					updateOne: {
 						filter: { _id: newRun._id },

@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { config } from "./config";
 import { commands } from "./commands";
 import { deployCommands } from "./deploy-commands";
-import { User, Guild } from "../db";
+import { User, Guild } from "../db/models";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
@@ -13,9 +13,13 @@ client.once("ready", () => {
 });
 
 client.on("guildCreate", async (guild) => {
-	const newGuild = new Guild({ _id : guild.id, name : guild.name });
-	await newGuild.save();
   await deployCommands({ guildId: guild.id });
+
+	await Guild.updateOne(
+		{ _id: guild.id },
+		{ $set: { _id : guild.id, name : guild.name } },
+		{ upsert: true }
+	);
 });
 
 client.on("guildDelete", async (guild) => {

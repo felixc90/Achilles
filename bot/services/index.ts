@@ -1,9 +1,3 @@
-import { GuildService } from './guild';
-import { StravaService } from './strava';
-import { UserService } from './user';
-
-export {
-	UserService,
-	GuildService,
-	StravaService
-}
+export { GuildService } from './guild';
+export { StravaService } from './strava';
+export { UserService } from './user';

@@ -1,10 +1,27 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const schema = new Schema({
-	_id: String,
+export interface IUser extends Document {
+  _id: string,
+	athleteId: string,
+	firstName?: string,
+	lastName: string,
+	username: string,
+	profile: string,
+	accessToken: {
+		accessToken: string
+		refreshToken: string
+		expiresAt: number
+		expiresIn: number
+		tokenType: string
+	}
+};
+
+export const UserSchema = new Schema({
+  _id: String,
 	athleteId: String,
 	firstName: String,
 	lastName: String,
+	username: String,
 	profile: String,
 	accessToken: {
 		type: {
@@ -33,4 +50,5 @@ const schema = new Schema({
 	}
 });
 
-export default mongoose.model('User', schema);
+const User = mongoose.model<IUser>('User', UserSchema);
+export default User;

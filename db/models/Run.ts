@@ -1,7 +1,28 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const schema = new Schema({
-	_id: String,
+export interface IRun extends Document {
+  _id: string,
+	athleteId: string,
+	name: string,
+	distance: number,
+	movingTime: number,
+	elapsedTime: number,
+	totalElevationGain: number,
+	startDate: string,
+	startDateLocal: string,
+	timezone: string,
+	utcOffset: number,
+	startLatlng: string,
+	endLatlng: string,
+	location: {
+		city: string,
+		state: string,
+		country: string
+	}
+};
+
+export const RunSchema = new Schema({
+  _id: String,
 	athleteId: String,
 	name: String,
 	distance: Number,
@@ -21,4 +42,5 @@ const schema = new Schema({
 	}
 });
 
-export default mongoose.model('Run', schema);
+const Run = mongoose.model<IRun>('Run', RunSchema);
+export default Run;
