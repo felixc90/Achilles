@@ -1,9 +1,11 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import {  } from "../types";
 import { Guild } from "../../db";
 import { GuildService } from "../services";
 import { errorMessage } from "../utils/errorMessage";
 import { LeaderboardUser, IGuild } from '../types';
+
+const pageSize = 5;
 
 export const data = new SlashCommandBuilder()
   .setName("leaderboard")
@@ -25,8 +27,6 @@ export async function execute(interaction: CommandInteraction) {
 }
 
 function createLeaderboard(data: LeaderboardUser[], guildIcon?: string, pageNumber = 1) {
-
-	console.log(guildIcon);
 	const embed = new EmbedBuilder();
 	embed.setTitle('Weekly Leaderboard');
 	embed.setColor('#05CBE1')
@@ -35,9 +35,25 @@ function createLeaderboard(data: LeaderboardUser[], guildIcon?: string, pageNumb
 	embed.setTimestamp();
 	embed.setThumbnail(guildIcon ? guildIcon : 'https://i.imgur.com/xJXLhW3.png');
 
+	const row = new ActionRowBuilder<ButtonBuilder>();
+
+	const prevButton = new ButtonBuilder()
+		.setCustomId('prev-page')
+		.setLabel('Prev Page')
+		.setStyle(ButtonStyle.Danger)
+		.setDisabled(pageNumber === 1)
+	
+	const nextButton = new ButtonBuilder()
+		.setCustomId('next-page')
+		.setLabel('Next Page')
+		.setStyle(ButtonStyle.Success)
+		.setDisabled(pageNumber === data.length / pageSize)
+	
+	row.addComponents(prevButton, nextButton);
+
 	return {
-    embeds: [embed]
-    // components: [getMessageRow(fields, 1)]
+    embeds: [embed],
+    components: [row]
   }
 }
 

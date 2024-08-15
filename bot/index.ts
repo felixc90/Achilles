@@ -27,13 +27,17 @@ client.on("guildDelete", async (guild) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) {
+  if (interaction.isButton()) {
+		
     return;
   }
-  const { commandName } = interaction;
-  if (commands[commandName as keyof typeof commands]) {
-    commands[commandName as keyof typeof commands].execute(interaction);
-  }
+
+	if (interaction.isCommand()) {
+		const { commandName } = interaction;
+		if (commands[commandName as keyof typeof commands]) {
+			commands[commandName as keyof typeof commands].execute(interaction);
+		}
+	}
 });
 
 client.login(config.DISCORD_TOKEN);
