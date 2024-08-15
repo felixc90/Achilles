@@ -1,12 +1,9 @@
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { IGuild } from "../types";
+import {  } from "../types";
 import { Guild } from "../../db";
 import { GuildService } from "../services";
 import { errorMessage } from "../utils/errorMessage";
-import { LeaderboardUser } from '../types/user';
-
-const pageSize = 5
-const numRanks = 10
+import { LeaderboardUser, IGuild } from '../types';
 
 export const data = new SlashCommandBuilder()
   .setName("leaderboard")
@@ -22,20 +19,21 @@ export async function execute(interaction: CommandInteraction) {
 
 	addSeedData(data);
 
-	const leaderboard = createLeaderboard(data);
+	const leaderboard = createLeaderboard(data, interaction.guild?.iconURL() ?? undefined);
 
 	return interaction.reply(leaderboard);
 }
 
-function createLeaderboard(data: LeaderboardUser[], pageNumber = 1) {
+function createLeaderboard(data: LeaderboardUser[], guildIcon?: string, pageNumber = 1) {
 
+	console.log(guildIcon);
 	const embed = new EmbedBuilder();
 	embed.setTitle('Weekly Leaderboard');
 	embed.setColor('#05CBE1')
-	embed.setThumbnail('https://i.imgur.com/xJXLhW3.png')
 	embed.setFooter({ text: `\u200b\n Page ${pageNumber}` });
 	embed.addFields(data.map((user, i) => toEmbedField(user, i)))
 	embed.setTimestamp();
+	embed.setThumbnail(guildIcon ? guildIcon : 'https://i.imgur.com/xJXLhW3.png');
 
 	return {
     embeds: [embed]
@@ -63,7 +61,7 @@ function addSeedData(data: LeaderboardUser[]) {
 function toEmbedField(user: LeaderboardUser, index: number) {
 	const fullName = (user.firstName + ' ' + user.lastName).trim();
 	const username = user.username ? `(${user.username})` : '';
-	const distance = user.distance / 1000
+	const distance = user.distance / 1000;
 
 	return {
 		name: `${ordinal(index + 1)}`,
