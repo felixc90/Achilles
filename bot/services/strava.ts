@@ -1,12 +1,13 @@
 import { config } from "../config";
 import { AccessToken } from "../types";
+import { Activity } from "../types/strava";
 
 export class StravaService {
 	constructor (private accessToken: AccessToken | undefined) {}
 
-	public getAthleteActivities(before?: number, after?: number, page?: number, per_page?: number) {
+	public getAthleteActivities(before?: number, after?: number, page?: number, per_page?: number): Promise<Activity[]> {
 		const params = this.paramsFor({ before, after, page, per_page });
-		return this.getRequest(`/athlete/activities${params}`);
+		return this.getRequest(`/athlete/activities${params}`) as Promise<Activity[]>;
 	}
 
 	private async getRequest<TReturnType>(url: string): Promise<TReturnType> {
@@ -53,7 +54,6 @@ export class StravaService {
 				},
 				body: body ? typeof body === "string" ? body : JSON.stringify(body) : undefined
 			};
-
 			const res = await fetch(fullUrl, opts);
 			return res.json() as Promise<TReturnType>;
 		} catch (error) {
@@ -84,6 +84,7 @@ export class StravaService {
 			}),
 		};
 
+		// TODO: Update access token in db
 		const res = await fetch('https://www.strava.com/oauth/token', authOptions);
 		const json = await res.json();
 

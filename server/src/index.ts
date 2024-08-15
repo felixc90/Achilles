@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { config } from './config';
-import { User, Guild } from '../models';
+import { User, Guild } from '../../db';
 
 const app = express();
 
@@ -32,6 +32,7 @@ app.get('/callback/:guildId/:userId', async (req: Request, res: Response) => {
 	if (result.ok) {
 		const user = new User({
 			_id: req.params.userId,
+			stravaId: json.athlete.id,
 			firstName: json.athlete.firstname,
 			lastName: json.athlete.lastname,
 			profile: json.athlete.profile,

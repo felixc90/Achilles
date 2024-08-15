@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const schema = new Schema({
 	_id: String,
+	athleteId: String,
 	firstName: String,
 	lastName: String,
 	profile: String,

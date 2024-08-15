@@ -1,7 +1,10 @@
 
 import mongoose from "mongoose";
-import Guild from "./models/Guild";
-import User from "./models/User";
+import {
+	User,
+	Guild,
+	Run
+} from './models';
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -12,5 +15,6 @@ mongoose.connect(MONGODB_CONNECT ?? '');
 
 export {
 	User,
-	Guild
+	Guild,
+	Run
 }

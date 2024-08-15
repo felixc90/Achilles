@@ -1,18 +1,22 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Guild, User } from "../../db";
-import { StravaService } from "../services/strava";
+import { UserService } from '../services/user';
+import { StravaService } from '../services/strava';
+import { GuildService } from '../services/guild';
+import { IGuild } from "../types";
 
 export const data = new SlashCommandBuilder()
   .setName("ping")
   .setDescription("Replies with Pong!");
 
 export async function execute(interaction: CommandInteraction) {
+	const guild = await Guild.findById(interaction.guildId);
 
-	const user = await User.findById(interaction.user.id);
-	const stravaApi = new StravaService(user?.accessToken);
+	if (!guild) return interaction.reply("Png!");
 
-	const data = await stravaApi.getAthleteActivities();
-	console.log(data);
+	const guildService = new GuildService(guild as IGuild);
+
+	guildService.getWeeklyTopUsers();
 
   return interaction.reply("Pong!");
 }
