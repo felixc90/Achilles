@@ -56,7 +56,7 @@ export function createLeaderboard(
 		.setCustomId('next-page')
 		.setLabel('Next Page')
 		.setStyle(ButtonStyle.Success)
-		.setDisabled(pageNumber === data.length / pageSize)
+		.setDisabled(pageNumber >= data.length / pageSize)
 
 	row.addComponents(prevButton, nextButton);
 

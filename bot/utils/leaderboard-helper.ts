@@ -10,6 +10,7 @@ export class LeaderboardHelper {
 		const description = embed.description ?? "";
 
 		const datePart = description.replace(/Week starting\s+/i, '');
+		// TODO: handle error cehcking
     const parsedDate = new Date(Date.parse(datePart));
 
 		// TODO: make handling of dates consistent
