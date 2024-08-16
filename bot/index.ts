@@ -1,6 +1,7 @@
 import { Client } from "discord.js";
 import { config } from "./config";
 import { commands } from "./commands";
+import { buttons } from "./buttons";
 import { deployCommands } from "./deploy-commands";
 import { User, Guild } from "../db/models";
 
@@ -14,7 +15,6 @@ client.once("ready", () => {
 
 client.on("guildCreate", async (guild) => {
   await deployCommands({ guildId: guild.id });
-
 	await Guild.updateOne(
 		{ _id: guild.id },
 		{ $set: { _id : guild.id, name : guild.name } },
@@ -28,8 +28,10 @@ client.on("guildDelete", async (guild) => {
 
 client.on("interactionCreate", async (interaction) => {
   if (interaction.isButton()) {
-		
-    return;
+		const { customId } = interaction;
+		if (buttons[customId as keyof typeof buttons]) {
+			buttons[customId as keyof typeof buttons].execute(interaction);
+		}
   }
 
 	if (interaction.isCommand()) {
