@@ -5,6 +5,7 @@ import { GuildService } from "../services";
 import { errorMessage } from "../utils/error";
 import { LeaderboardUser, IGuild } from '../types';
 import { DateHelper } from "../utils/date-helper";
+import { deployCommands } from "../deploy-commands";
 
 const pageSize = 5;
 
@@ -13,11 +14,10 @@ export const data = new SlashCommandBuilder()
   .setDescription("Displays the weekly leaderboard!");
 
 export async function execute(interaction: CommandInteraction) {
-	const guild = await Guild.findById(interaction.guildId);
+	// TODO: don't like the following, or maybe change guild service
+	if (!interaction.guildId) return interaction.reply(errorMessage);
 
-	if (!guild) return interaction.reply(errorMessage);
-
-	const guildService = new GuildService(guild as IGuild);
+	const guildService = new GuildService(interaction.guildId);
 	const data = await guildService.getWeeklyTopUsers();
 
 	const { embed, row } = createLeaderboard(data, interaction.guild?.iconURL() ?? undefined);

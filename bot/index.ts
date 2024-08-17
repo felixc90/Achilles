@@ -27,6 +27,8 @@ client.on("guildDelete", async (guild) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+	// TODO: remove - testing only
+	if (interaction.guild) await deployCommands({ guildId: interaction.guild.id });
   if (interaction.isButton()) {
 		const { customId } = interaction;
 		if (buttons[customId as keyof typeof buttons]) {

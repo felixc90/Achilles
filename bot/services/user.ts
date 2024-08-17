@@ -1,5 +1,4 @@
-import { config } from "../config";
-import { AccessToken, Activity,  } from "../types";
+import { AccessToken, Activity } from "../types";
 import { StravaService } from "./strava";
 import { Run } from '../../db';
 
@@ -10,6 +9,7 @@ export class UserService {
 		const activities: Activity[] = await stravaService.getAthleteActivities();
 
 		// TODO: filter only recent runs and not those already in db
+		// TODO: enable adding of all runs
 		// TODO: intermittently fails due to long wait time
 		const bulkRuns = activities
 			.filter(a => a.type === "Run")

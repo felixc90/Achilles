@@ -79,8 +79,6 @@ async function plotData(dates, datasets, users, unitOfTime) {
   return attachment
 }
 
-
-
 function getConfig(labels, datasets, users, unitOfTime) {
   return {
     type: 'line',

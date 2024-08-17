@@ -10,11 +10,9 @@ import { LeaderboardHelper } from "../utils/leaderboard-helper";
 export const PrevPageButton: Button = {
 	customId: 'prev-page',
 	execute: async (interaction: ButtonInteraction) => {
-		const guild = await Guild.findById(interaction.guildId);
-
-		if (!guild) return interaction.reply(errorMessage);
-	
-		const guildService = new GuildService(guild as IGuild);
+		
+		if (!interaction.guildId) return interaction.reply(errorMessage);
+		const guildService = new GuildService(interaction.guildId);
 
 		const pageNumber = LeaderboardHelper.parsePageNumber(interaction.message.embeds[0]);
 		const week = LeaderboardHelper.parseWeekDate(interaction.message.embeds[0]);

@@ -7,7 +7,7 @@ export const data = new SlashCommandBuilder()
 	.setDescription('Link your Strava account with Achilles!');
 
 export async function execute(interaction: CommandInteraction) {
-	// TODO: use upsert here as well
+
 	const user = await User.findOne({ _id : interaction.user.id });
 	if (user) {
 		const guild = await Guild.findOne({ _id : interaction.guildId });
@@ -25,6 +25,7 @@ export async function execute(interaction: CommandInteraction) {
 	let redirectUri = config.STRAVA_REDIRECT_URI;
 	redirectUri += `/${interaction?.guild?.id ?? ''}`
 	redirectUri += `/${interaction?.user?.id ?? ''}`
+	// implement collection of username
 
 	const params = {
 		response_type: 'code',

@@ -54,9 +54,11 @@ export class StravaService {
 				},
 				body: body ? typeof body === "string" ? body : JSON.stringify(body) : undefined
 			};
+			// TODO: handle other errors
 			const res = await fetch(fullUrl, opts);
 			return res.json() as Promise<TReturnType>;
 		} catch (error) {
+			// TODO: handle error better
 			console.error('Error: ' + error);
 			return null as TReturnType;
 		}
