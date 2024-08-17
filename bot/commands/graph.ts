@@ -19,7 +19,6 @@ interface Dataset {
 	data: number[]
 }
 
-
 export const data = new SlashCommandBuilder()
   .setName("graph")
   .setDescription("Displays a graph showing run history!")
@@ -29,8 +28,10 @@ export const data = new SlashCommandBuilder()
 			.setDescription('Choose time period')
 			.setRequired(true)
 			.addChoices(
-				{ name: 'day', value: 'day' },
-				{ name: 'week', value: 'week' }
+				{ name: Period.Day, value: Period.Day },
+				{ name: Period.Week, value: Period.Week },
+				{ name: Period.Month, value: Period.Month },
+				{ name: Period.Year, value: Period.Year },
 			))
 		.addIntegerOption(
 			new SlashCommandIntegerOption()
@@ -90,8 +91,7 @@ async function createChart(chartData: ChartInput) {
       height,
       chartCallback: (ChartJS) => {},
       backgroundColour: '#222732'
-  }, )
-
+  })
 	const config = createConfiguration(chartData);
   const image = await canvas.renderToBuffer(config);
   const attachment = new AttachmentBuilder(image)

@@ -21,8 +21,9 @@ export class UserService {
 		const user = await User.findById(this.userId, 'athleteId');
 		if (!user) return [];
 
-		// TODO: resolve count + 1, issue with buckets and boundaries
 		const boundaries = DateHelper.getStartOfPeriods(period, count + 1).map(d => d.toISOString());
+		boundaries.push((new Date()).toISOString());
+
 		const res = await Run.aggregate<AggregatedRun>([
 			{
 				$match:
@@ -38,7 +39,7 @@ export class UserService {
 					default: "Other",
 					output: {
 						"distance": { $sum: "$distance" },
-						"time": { $sum: "$time" },
+						"time": { $sum: "$movingTime" },
 					}
 				}
 			},
@@ -47,8 +48,7 @@ export class UserService {
 		const allBoundaries = new Set(boundaries);
 		res.forEach(aggRun => allBoundaries.delete(aggRun._id));
 		allBoundaries.forEach(date => res.push({ _id: date, distance: 0, time: 0 }));
-
-		return res.sort((a, b) => a._id.localeCompare(b._id));
+		return res.sort((a, b) => a._id.localeCompare(b._id)).slice(0, -1);
 	}
 
 	public async saveAthleteRuns(accessToken: AccessToken) {
