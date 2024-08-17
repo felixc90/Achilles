@@ -10,7 +10,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript + Node.js + Express!');
 });
 
-app.get('/callback/:guildId/:userId', async (req: Request, res: Response) => {
+app.get('/callback/:guildId/:userId/:username', async (req: Request, res: Response) => {
 	const code = req.query.code || null;
 
 	const authOptions = {
@@ -35,6 +35,7 @@ app.get('/callback/:guildId/:userId', async (req: Request, res: Response) => {
 			stravaId: json.athlete.id,
 			firstName: json.athlete.firstname,
 			lastName: json.athlete.lastname,
+			username: req.params.username,
 			profile: json.athlete.profile,
 			accessToken: {
 				accessToken: json.access_token,

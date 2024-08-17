@@ -3,7 +3,7 @@ import { config } from "../config";
 import { Guild, User } from "../../db";
 
 export const data = new SlashCommandBuilder()
-	.setName('register')
+	.setName('link')
 	.setDescription('Link your Strava account with Achilles!');
 
 export async function execute(interaction: CommandInteraction) {
@@ -25,7 +25,7 @@ export async function execute(interaction: CommandInteraction) {
 	let redirectUri = config.STRAVA_REDIRECT_URI;
 	redirectUri += `/${interaction?.guild?.id ?? ''}`
 	redirectUri += `/${interaction?.user?.id ?? ''}`
-	// implement collection of username
+	redirectUri += `/${interaction?.user?.username ?? ''}`
 
 	const params = {
 		response_type: 'code',

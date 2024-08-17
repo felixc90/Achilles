@@ -1,11 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import {  } from "../types";
-import { Guild } from "../../db";
 import { GuildService } from "../services";
 import { errorMessage } from "../utils/error";
 import { LeaderboardUser, IGuild } from '../types';
 import { DateHelper } from "../utils/date-helper";
-import { deployCommands } from "../deploy-commands";
 
 const pageSize = 5;
 

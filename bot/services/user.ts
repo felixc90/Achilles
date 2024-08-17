@@ -7,6 +7,14 @@ export class UserService {
 
 	public constructor(private userId: string) {};
 
+	// TODO: consider implementing properties
+	public async getUsername() {
+		const user = await User.findById(this.userId, 'username');
+		console.log(user);
+		if (!user) return 'Undefined';
+
+		return user.username;
+	}
 
 	public async getAggregatedRuns(period: Period, count: number) {
 		// TODO: maybe make a cache for this??
