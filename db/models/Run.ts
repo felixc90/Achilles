@@ -23,14 +23,14 @@ export interface IRun extends Document {
 
 export const RunSchema = new Schema({
   _id: String,
-	athleteId: String,
+	athleteId: { type: String, index: true },
 	name: String,
 	distance: Number,
 	movingTime: Number,
 	elapsedTime: Number,
 	totalElevationGain: Number,
-	startDate: String,
-	startDateLocal: String,
+	startDate: { type: String, index: true },
+	startDateLocal: { type: String, index: true },
 	timezone: String,
 	utcOffset: Number,
 	startLatlng: String,

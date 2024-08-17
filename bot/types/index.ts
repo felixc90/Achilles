@@ -1,5 +1,5 @@
 export { AccessToken } from './auth';
-export { Activity } from './strava';
+export { Activity, GetAthleteActivitesRequest } from './strava';
 export { LeaderboardUser } from './user';
 export {
 	IGuild,

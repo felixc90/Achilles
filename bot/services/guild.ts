@@ -10,7 +10,6 @@ export class GuildService {
 		const guild = await Guild.findById(this.guildId, 'members');
 
 		const getOperations = guild?.members?.map(async (memberId: string) => {
-			// TODO: make this bit more concise by adding a projection
 			return await User.findById(memberId);
 		});
 		

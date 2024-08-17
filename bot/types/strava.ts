@@ -57,3 +57,10 @@ export interface Activity {
 	"has_kudoed": boolean,
 	"suffer_score": number
 }
+
+export interface GetAthleteActivitesRequest {
+	before?: number, 
+	after?: number, 
+	page?: number, 
+	per_page?: number
+}

@@ -14,8 +14,11 @@ export const PrevPageButton: Button = {
 		if (!interaction.guildId) return interaction.reply(errorMessage);
 		const guildService = new GuildService(interaction.guildId);
 
-		const pageNumber = LeaderboardHelper.parsePageNumber(interaction.message.embeds[0]);
-		const week = LeaderboardHelper.parseWeekDate(interaction.message.embeds[0]);
+		const leaderboardEmbed = interaction.message.embeds.at(0);
+		if (!leaderboardEmbed) return interaction.reply(errorMessage);
+
+		const pageNumber = LeaderboardHelper.parsePageNumber(leaderboardEmbed);
+		const week = LeaderboardHelper.parseWeekDate(leaderboardEmbed);
 
 		const data = await guildService.getWeeklyTopUsers(week);
 	

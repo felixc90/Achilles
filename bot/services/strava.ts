@@ -1,13 +1,13 @@
 import { config } from "../config";
 import { AccessToken } from "../types";
-import { Activity } from "../types/strava";
+import { Activity, GetAthleteActivitesRequest } from "../types";
 
 export class StravaService {
 	constructor (private accessToken: AccessToken | undefined) {}
 
-	public getAthleteActivities(before?: number, after?: number, page?: number, per_page?: number): Promise<Activity[]> {
-		const params = this.paramsFor({ before, after, page, per_page });
-		return this.getRequest(`/athlete/activities${params}`) as Promise<Activity[]>;
+	public getAthleteActivities(params: GetAthleteActivitesRequest): Promise<Activity[]> {
+		const paramsUrl = this.paramsFor(params);
+		return this.getRequest(`/athlete/activities${paramsUrl}`) as Promise<Activity[]>;
 	}
 
 	private async getRequest<TReturnType>(url: string): Promise<TReturnType> {
@@ -56,7 +56,9 @@ export class StravaService {
 			};
 			// TODO: handle other errors
 			const res = await fetch(fullUrl, opts);
-			return res.json() as Promise<TReturnType>;
+			const json = await res.json();
+			
+			return json as Promise<TReturnType>;
 		} catch (error) {
 			// TODO: handle error better
 			console.error('Error: ' + error);

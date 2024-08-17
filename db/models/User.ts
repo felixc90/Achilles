@@ -18,7 +18,7 @@ export interface IUser extends Document {
 
 export const UserSchema = new Schema({
   _id: String,
-	athleteId: String,
+	athleteId: { type: String, index: { unique: true } },
 	firstName: String,
 	lastName: String,
 	username: String,
