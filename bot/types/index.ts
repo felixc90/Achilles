@@ -6,3 +6,5 @@ export {
 	IUser,
 	IRun
 } from '../../db/models'
+export { Period } from './bot';
+export { AggregatedRun } from './run';

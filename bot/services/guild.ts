@@ -1,13 +1,7 @@
 import { Guild, Run, User, } from "../../db";
-import { IGuild, IUser } from "../types";
+import { AggregatedRun, IUser } from "../types";
 import { LeaderboardUser } from "../types/user";
 import { DateHelper } from '../utils/date-helper';
-
-interface AggregatedRun {
-	_id: string;
-	distance: number;
-	time: number;
-}
 
 export class GuildService {
 	public constructor(private guildId: string) {};

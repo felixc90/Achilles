@@ -1,8 +1,47 @@
-import { AccessToken, Activity } from "../types";
+import { AccessToken, Activity, AggregatedRun, Period } from "../types";
 import { StravaService } from "./strava";
-import { Run } from '../../db';
+import { Run, User } from '../../db';
+import { DateHelper } from "../utils/date-helper";
 
 export class UserService {
+
+	public constructor(private userId: string) {};
+
+
+	public async getAggregatedRuns(period: Period, count: number) {
+		// TODO: maybe make a cache for this??
+		const user = await User.findById(this.userId, 'athleteId');
+		if (!user) return [];
+
+		// TODO: resolve count + 1, issue with buckets and boundaries
+		const boundaries = DateHelper.getStartOfPeriods(period, count + 1).map(d => d.toISOString());
+		const res = await Run.aggregate<AggregatedRun>([
+			{
+				$match:
+				{ 
+					athleteId : user.athleteId,
+					startDateLocal : { $gte: boundaries[0] }
+				}
+			},
+			{
+				$bucket: {
+					groupBy: "$startDateLocal",
+					boundaries: boundaries,
+					default: "Other",
+					output: {
+						"distance": { $sum: "$distance" },
+						"time": { $sum: "$time" },
+					}
+				}
+			},
+		])
+
+		const allBoundaries = new Set(boundaries);
+		res.forEach(aggRun => allBoundaries.delete(aggRun._id));
+		allBoundaries.forEach(date => res.push({ _id: date, distance: 0, time: 0 }));
+
+		return res.sort((a, b) => a._id.localeCompare(b._id));
+	}
 
 	public async saveAthleteRuns(accessToken: AccessToken) {
 		const stravaService = new StravaService(accessToken);
