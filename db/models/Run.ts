@@ -42,5 +42,4 @@ export const RunSchema = new Schema({
 	}
 });
 
-const Run = mongoose.model<IRun>('Run', RunSchema);
-export default Run;
+export const Run = mongoose.model<IRun>('Run', RunSchema);
