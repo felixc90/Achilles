@@ -6,13 +6,14 @@ import { deployCommands } from "./deploy-commands";
 import { Guild, User } from "./models";
 import express, { Request, Response } from 'express';
 import mongoose from "mongoose";
+import { Logger } from "./services";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
 });
 
 client.once("ready", () => {
-  console.log("Discord bot is ready! 🤖");
+  Logger.info("Discord bot is ready! 🤖");
 });
 
 client.on("guildCreate", async (guild) => {
@@ -22,16 +23,19 @@ client.on("guildCreate", async (guild) => {
 		{ $set: { _id : guild.id, name : guild.name } },
 		{ upsert: true }
 	);
+	Logger.info(`Created guild ${guild.name}`)
 });
 
 client.on("guildDelete", async (guild) => {
   // await Guild.deleteOne({ _id: guild.id });
+	Logger.info(`Deleted guild ${guild.name}`)
 });
 
 client.on("interactionCreate", async (interaction) => {
   if (interaction.isButton()) {
 		const { customId } = interaction;
 		if (buttons[customId as keyof typeof buttons]) {
+			Logger.info(`User ${interaction.user.username} clicked ${customId} button`)
 			buttons[customId as keyof typeof buttons].execute(interaction);
 		}
   }
@@ -39,6 +43,7 @@ client.on("interactionCreate", async (interaction) => {
 	if (interaction.isCommand()) {
 		const { commandName } = interaction;
 		if (commands[commandName as keyof typeof commands]) {
+			Logger.info(`User ${interaction.user.username} executed ${commandName} command`)
 			commands[commandName as keyof typeof commands].execute(interaction);
 		}
 	}
@@ -100,9 +105,9 @@ app.get('/callback/:guildId/:userId/:username', async (req: Request, res: Respon
 });
 
 app.listen(port, () => {
-	console.log(`Server is running on http://localhost:${port} 🚀`);
+	Logger.info(`Server is running on http://localhost:${port} 🚀`);
 });
 
 mongoose.connect(config.MONGODB_CONNECT).then(() => {
-	console.log('Database connected successfully 📚')
+	Logger.info('Database connected successfully 📚')
 });
