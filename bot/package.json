@@ -10,10 +10,13 @@
     "crypto-js": "^4.2.0",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.3",
     "pino": "^9.3.2",
     "pino-pretty": "^11.2.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "eslint": "^9.9.0",
     "tsup": "^8.2.4",
     "tsx": "^4.17.0",

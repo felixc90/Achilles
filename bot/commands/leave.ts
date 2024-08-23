@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { Guild } from "../../db";
+import { Guild } from "../models";
 import { errorMessage } from "../utils/error";
 
 export const data = new SlashCommandBuilder()

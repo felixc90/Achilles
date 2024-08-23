@@ -1,4 +1,4 @@
-import { Guild, Run, User } from "../../db";
+import { Guild, Run, User } from "../models";
 import { AggregatedRun, IUser } from "../types";
 import { LeaderboardUser } from "../types/user";
 import { DateHelper } from '../utils/date-helper';

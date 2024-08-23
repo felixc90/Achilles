@@ -5,6 +5,6 @@ export {
 	IGuild,
 	IUser,
 	IRun
-} from '../../db'
+} from '../models'
 export { Period } from './bot';
 export { AggregatedRun } from './run';

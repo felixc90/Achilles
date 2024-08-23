@@ -1,6 +1,6 @@
 import { AccessToken, Activity, AggregatedRun, IRun, Period } from "../types";
 import { StravaService } from "./strava";
-import { Run, User } from '../../db';
+import { Run, User } from '../models';
 import { DateHelper } from "../utils/date-helper";
 import { Logger } from "./logger";
 

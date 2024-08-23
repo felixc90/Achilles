@@ -5,7 +5,7 @@ import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { ChartConfiguration } from "chart.js";
 import { registerFont } from "canvas";
 import { errorMessage } from "../utils/error";
-import { User } from "../../db";
+import { User } from "../models";
 
 interface ChartInput {
 	labels: string[], 

@@ -1,5 +1,5 @@
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder, SlashCommandStringOption } from "discord.js";
-import { Guild, User } from "../../db";
+import { Guild, User } from "../models";
 import { errorMessage } from "../utils/error";
 
 export const data = new SlashCommandBuilder()

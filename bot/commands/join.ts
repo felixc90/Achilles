@@ -1,6 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { config } from "../config";
-import { Guild, User } from "../../db";
+import { Guild, User } from "../models";
 
 export const data = new SlashCommandBuilder()
 	.setName('join')
