@@ -1,5 +1,6 @@
+import { Logger } from "../services";
 import { config } from "../config";
-import { AccessToken } from "../types";
+import { AccessToken, StravaError } from "../types";
 import { Activity, GetAthleteActivitesRequest } from "../types";
 
 export class StravaService {
@@ -7,7 +8,7 @@ export class StravaService {
 
 	public getAthleteActivities(params: GetAthleteActivitesRequest): Promise<Activity[]> {
 		const paramsUrl = this.paramsFor(params);
-		return this.getRequest(`/athlete/activities${paramsUrl}`) as Promise<Activity[]>;
+		return this.getRequest<Activity[]>(`/athlete/activities${paramsUrl}`);
 	}
 
 	private async getRequest<TReturnType>(url: string): Promise<TReturnType> {
@@ -39,7 +40,7 @@ export class StravaService {
 	private async makeRequest<TReturnType>(method: "GET" | "POST" | "PUT" | "DELETE", url: string, body: any = undefined, contentType: string | undefined = undefined): Promise<TReturnType> {
 		try {
 			const newAccessToken = await this.getOrCreateAccessToken();
-			if (newAccessToken === emptyAccessToken) {
+			if (newAccessToken == emptyAccessToken) {
 				return null as TReturnType;
 			}
 
@@ -49,59 +50,81 @@ export class StravaService {
 			const opts: RequestInit = {
 				method: method,
 				headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": contentType ?? "application/json"
+					Authorization: `Bearer ${token}`,
+					"Content-Type": contentType ?? "application/json"
 				},
 				body: body ? typeof body === "string" ? body : JSON.stringify(body) : undefined
 			};
-			// TODO: handle other errors
 			const res = await fetch(fullUrl, opts);
 			const json = await res.json();
+
+			if (!res.ok) {
+				Logger.error(this.formatStravaError(json as StravaError));
+				return null as TReturnType;
+			}
 			
 			return json as Promise<TReturnType>;
 		} catch (error) {
-			// TODO: handle error better
-			console.error('Error: ' + error);
+			Logger.error(error as string)
 			return null as TReturnType;
 		}
 	}
 
 	private async getOrCreateAccessToken(): Promise<AccessToken> {
-		if (!this.accessToken) {
+		try {
+			if (!this.accessToken) {
+				Logger.error(`Service Error: Cannot find access token due to missing field`);
+				return emptyAccessToken;
+			}
+			if ((new Date()).getTime() / 1000 < this.accessToken.expiresAt) {
+				return this.accessToken;
+			}
+
+			const authOptions = {
+				method: 'post',
+				headers: {
+					'Accept': 'application/json, text/plain, */*',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					client_id: config.STRAVA_CLIENT_ID,
+					client_secret: config.STRAVA_CLIENT_SECRET,
+					refresh_token: this.accessToken.refreshToken,
+					grant_type: 'refresh_token'
+				}),
+			};
+
+			// TODO: Update access token in db
+			const res = await fetch('https://www.strava.com/oauth/token', authOptions);
+			const json = await res.json();
+
+			if (!res.ok) {
+				Logger.error(this.formatStravaError(json));
+				return emptyAccessToken;
+			}
+
+			return this.accessToken = {
+				accessToken: json.access_token,
+				refreshToken: json.refresh_token,
+				expiresAt: json.expires_at,
+				expiresIn: json.expires_in,
+				tokenType: json.token_type
+			}
+		} catch (error) {
+			Logger.error(error as string)
 			return emptyAccessToken;
 		}
-		if ((new Date()).getTime() / 1000 < this.accessToken.expiresAt) {
-			return this.accessToken;
-		}
+	}
 
-		const authOptions = {
-			method: 'post',
-			headers: {
-				'Accept': 'application/json, text/plain, */*',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				client_id: config.STRAVA_CLIENT_ID,
-				client_secret: config.STRAVA_CLIENT_SECRET,
-				refresh_token: this.accessToken.refreshToken,
-				grant_type: 'refresh_token'
-			}),
-		};
-
-		// TODO: Update access token in db
-		const res = await fetch('https://www.strava.com/oauth/token', authOptions);
-		const json = await res.json();
-
-		return this.accessToken = {
-			accessToken: json.access_token,
-			refreshToken: json.refresh_token,
-			expiresAt: json.expires_at,
-			expiresIn: json.expires_in,
-			tokenType: json.token_type
-		}
+	private formatStravaError(error: StravaError) {
+		return `${error.message}: ` +
+			error.errors.map(e => 
+				`Resource ${e.resource} cannot be accessed due to ${e.code} field ${e.field}`
+			).join('and \n\t')
 	}
 }
 
+// TODO: move this to constants or something
 const emptyAccessToken: AccessToken = { 
 	accessToken: "emptyAccessToken", 
 	tokenType: "", 
