@@ -6,6 +6,14 @@ import { Activity, GetAthleteActivitesRequest } from "../types";
 export class StravaService {
 	constructor (private accessToken: AccessToken | undefined) {}
 
+	public static readonly emptyAccessToken: AccessToken = { 
+		accessToken: "emptyAccessToken", 
+		tokenType: "", 
+		expiresAt: 0, 
+		refreshToken: "", 
+		expiresIn: -1 
+	};
+
 	public getAthleteActivities(params: GetAthleteActivitesRequest): Promise<Activity[]> {
 		const paramsUrl = this.paramsFor(params);
 		return this.getRequest<Activity[]>(`/athlete/activities${paramsUrl}`);
@@ -40,7 +48,7 @@ export class StravaService {
 	private async makeRequest<TReturnType>(method: "GET" | "POST" | "PUT" | "DELETE", url: string, body: any = undefined, contentType: string | undefined = undefined): Promise<TReturnType> {
 		try {
 			const newAccessToken = await this.getOrCreateAccessToken();
-			if (newAccessToken == emptyAccessToken) {
+			if (newAccessToken == StravaService.emptyAccessToken) {
 				return null as TReturnType;
 			}
 
@@ -74,7 +82,7 @@ export class StravaService {
 		try {
 			if (!this.accessToken) {
 				Logger.error(`Service Error: Cannot find access token due to missing field`);
-				return emptyAccessToken;
+				return StravaService.emptyAccessToken;
 			}
 			if ((new Date()).getTime() / 1000 < this.accessToken.expiresAt) {
 				return this.accessToken;
@@ -100,7 +108,7 @@ export class StravaService {
 
 			if (!res.ok) {
 				Logger.error(this.formatStravaError(json));
-				return emptyAccessToken;
+				return StravaService.emptyAccessToken;
 			}
 
 			return this.accessToken = {
@@ -112,7 +120,7 @@ export class StravaService {
 			}
 		} catch (error) {
 			Logger.error(error as string)
-			return emptyAccessToken;
+			return StravaService.emptyAccessToken;
 		}
 	}
 
@@ -123,12 +131,3 @@ export class StravaService {
 			).join('and \n\t')
 	}
 }
-
-// TODO: move this to constants or something
-const emptyAccessToken: AccessToken = { 
-	accessToken: "emptyAccessToken", 
-	tokenType: "", 
-	expiresAt: 0, 
-	refreshToken: "", 
-	expiresIn: -1 
-};
