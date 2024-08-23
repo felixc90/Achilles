@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { config } from './config';
-import { User, Guild } from '../../db';
+import { User, Guild } from '../../db/models';
 
 const app = express();
 
