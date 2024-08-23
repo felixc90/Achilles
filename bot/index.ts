@@ -48,7 +48,7 @@ client.login(config.DISCORD_TOKEN);
 
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 4000;
 
 app.get('/callback/:guildId/:userId/:username', async (req: Request, res: Response) => {
 	const code = req.query.code || null;
