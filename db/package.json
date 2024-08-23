@@ -1,7 +1,7 @@
 {
 	"scripts": {
     "build": "tsc --incremental",
-    "start": "npm run build && nodemon ./dist/index.js"
+    "start": "npm run build && node ./dist/connection.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
