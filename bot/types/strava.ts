@@ -64,3 +64,8 @@ export interface GetAthleteActivitesRequest {
 	page?: number, 
 	per_page?: number
 }
+
+export interface StravaError {
+	message: string,
+	errors: { resource: string, field: string, code: string }[]
+}

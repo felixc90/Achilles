@@ -3,7 +3,7 @@ import { config } from "./config";
 import { commands } from "./commands";
 import { buttons } from "./buttons";
 import { deployCommands } from "./deploy-commands";
-import { User, Guild } from "../db/models";
+import { Guild } from "../db";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
@@ -27,8 +27,6 @@ client.on("guildDelete", async (guild) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-	// // TODO: remove - testing only
-	// if (interaction.guild) await deployCommands({ guildId: interaction.guild.id });
   if (interaction.isButton()) {
 		const { customId } = interaction;
 		if (buttons[customId as keyof typeof buttons]) {

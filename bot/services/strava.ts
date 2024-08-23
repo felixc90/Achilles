@@ -2,17 +2,10 @@ import { Logger } from "../services";
 import { config } from "../config";
 import { AccessToken, StravaError } from "../types";
 import { Activity, GetAthleteActivitesRequest } from "../types";
+import { emptyAccessToken } from "../constants";
 
 export class StravaService {
 	constructor (private accessToken: AccessToken | undefined) {}
-
-	public static readonly emptyAccessToken: AccessToken = { 
-		accessToken: "emptyAccessToken", 
-		tokenType: "", 
-		expiresAt: 0, 
-		refreshToken: "", 
-		expiresIn: -1 
-	};
 
 	public getAthleteActivities(params: GetAthleteActivitesRequest): Promise<Activity[]> {
 		const paramsUrl = this.paramsFor(params);
@@ -48,7 +41,7 @@ export class StravaService {
 	private async makeRequest<TReturnType>(method: "GET" | "POST" | "PUT" | "DELETE", url: string, body: any = undefined, contentType: string | undefined = undefined): Promise<TReturnType> {
 		try {
 			const newAccessToken = await this.getOrCreateAccessToken();
-			if (newAccessToken == StravaService.emptyAccessToken) {
+			if (newAccessToken == emptyAccessToken) {
 				return null as TReturnType;
 			}
 
@@ -82,7 +75,7 @@ export class StravaService {
 		try {
 			if (!this.accessToken) {
 				Logger.error(`Service Error: Cannot find access token due to missing field`);
-				return StravaService.emptyAccessToken;
+				return emptyAccessToken;
 			}
 			if ((new Date()).getTime() / 1000 < this.accessToken.expiresAt) {
 				return this.accessToken;
@@ -101,26 +94,28 @@ export class StravaService {
 					grant_type: 'refresh_token'
 				}),
 			};
-
-			// TODO: Update access token in db
+			
 			const res = await fetch('https://www.strava.com/oauth/token', authOptions);
 			const json = await res.json();
 
 			if (!res.ok) {
 				Logger.error(this.formatStravaError(json));
-				return StravaService.emptyAccessToken;
+				return emptyAccessToken;
 			}
 
-			return this.accessToken = {
+			const newAccessToken = {
 				accessToken: json.access_token,
 				refreshToken: json.refresh_token,
 				expiresAt: json.expires_at,
 				expiresIn: json.expires_in,
 				tokenType: json.token_type
 			}
+
+			// TODO: want to save access token to user
+			return this.accessToken = newAccessToken;
 		} catch (error) {
 			Logger.error(error as string)
-			return StravaService.emptyAccessToken;
+			return emptyAccessToken;
 		}
 	}
 

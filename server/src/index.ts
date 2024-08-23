@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { config } from './config';
-import { User, Guild } from '../../db/models';
+import { User, Guild } from '../../db';
 
 const app = express();
 
@@ -10,6 +10,7 @@ app.get('/callback/:guildId/:userId/:username', async (req: Request, res: Respon
 	const code = req.query.code || null;
 
 	const authOptions = {
+		method: 'post',
 		headers: {
 			'Accept': 'application/json, text/plain, */*',
 			'Content-Type': 'application/json'
@@ -28,7 +29,7 @@ app.get('/callback/:guildId/:userId/:username', async (req: Request, res: Respon
 	if (result.ok) {
 		const user = new User({
 			_id: req.params.userId,
-			stravaId: json.athlete.id,
+			athleteId: json.athlete.id,
 			firstName: json.athlete.firstname,
 			lastName: json.athlete.lastname,
 			username: req.params.username,

@@ -4,6 +4,7 @@ import { Period } from "../types";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { ChartConfiguration } from "chart.js";
 import { registerFont } from "canvas";
+import { errorMessage } from "../utils/error";
 import { User } from "../../db";
 
 interface ChartInput {
@@ -50,7 +51,7 @@ export async function execute(interaction: CommandInteraction) {
 	if (
 		typeof interaction.options.get('period')?.value != 'string' ||
 		typeof interaction.options.get('count')?.value != 'number'
-	) return;
+	) return interaction.reply(errorMessage);
 	const period = interaction.options.get('period')?.value as Period;
 	const count = interaction.options.get('count')?.value as number;
 

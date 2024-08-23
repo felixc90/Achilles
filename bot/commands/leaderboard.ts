@@ -11,7 +11,6 @@ export const data = new SlashCommandBuilder()
   .setDescription("Displays the weekly leaderboard!");
 
 export async function execute(interaction: CommandInteraction) {
-	// TODO: don't like the following, or maybe change guild service
 	if (!interaction.guildId) return interaction.reply(errorMessage);
 
 	const guildService = new GuildService(interaction.guildId);
@@ -37,10 +36,12 @@ export function createLeaderboard(
 	embed.setColor('#05CBE1')
 	embed.setFooter({ text: `\u200b\n Page ${pageNumber}` });
 	embed.setTimestamp();
-	embed.addFields(data.map((user, i) => toEmbedField(user, i)).slice(
-		(pageNumber - 1) * pageSize, pageNumber * pageSize
-	));
 	embed.setThumbnail(guildIcon ? guildIcon : 'https://i.imgur.com/xJXLhW3.png');
+
+	const fields = data.length > 0 ? data.map((user, i) => toEmbedField(user, i)).slice(
+		(pageNumber - 1) * pageSize, pageNumber * pageSize
+	) : [{ name: 'No data to be shown 👻!', value: '' }] ;
+	embed.addFields(fields);
 
 	const row = new ActionRowBuilder<ButtonBuilder>();
 	const prevButton = new ButtonBuilder()
@@ -74,8 +75,8 @@ function toEmbedField(user: LeaderboardUser, index: number) {
 
 function ordinal(n: number) {
 	if (n <= 3) {
-			const medals = ['\u200b\n🥇','🥈','🥉']
-			return medals[n - 1]
+			const medals = ['\u200b\n🥇','🥈','🥉'];
+			return medals[n - 1];
 	}
 	var s = ["th", "st", "nd", "rd"];
 	var v = n % 100;

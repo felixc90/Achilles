@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder, SlashCommandUserOption } from "discord.js";
-import { UserService } from "../services";
+import { GuildService, UserService } from "../services";
 import { errorMessage } from "../utils/error";
 
 export const data = new SlashCommandBuilder()
@@ -8,19 +8,26 @@ export const data = new SlashCommandBuilder()
 	.addUserOption(
 		new SlashCommandUserOption()
 			.setName('user')
-			.setDescription('Choose a user')
+			.setDescription('Choose a user to sync Strava data. Hint: choose Achilles to sync all')
 	)
 
 export async function execute(interaction: CommandInteraction) {
-
+	if (!interaction.guildId) return interaction.reply(errorMessage);
+	
+	await interaction.deferReply();
+	let res: number | null = 0;
 	const user = interaction.options.get('user')?.user;
 	const userId = user ? user.id : interaction.user.id;
 
-	const userService = new UserService(userId);
+	if (user?.bot && user?.username === 'Achilles') {
+		const guildService = new GuildService(interaction.guildId);
+		res = await guildService.syncAll();
+	} else {
+		const userService = new UserService(userId);
+		res = await userService.saveAthleteRuns();
+	}
 
-	await interaction.deferReply();
-	const res = await userService.saveAthleteRuns();
-	
-	if (res == -1) return await interaction.editReply(errorMessage);
-	return await interaction.editReply(`Synced ${res} runs from Strava!`);
+	if (res == null) return await interaction.editReply(errorMessage);
+
+	return await interaction.editReply(`Synced ${res} total runs from Strava!`);
 }
