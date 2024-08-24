@@ -15,7 +15,6 @@ export async function execute(interaction: CommandInteraction) {
 
 	const guildService = new GuildService(interaction.guildId);
 	const data = await guildService.getWeeklyTopUsers();
-	console.log(data);
 
 	const { embed, row } = createLeaderboard(data, interaction.guild?.iconURL() ?? undefined);
 	return interaction.reply({

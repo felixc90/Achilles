@@ -56,6 +56,7 @@ export async function execute(interaction: CommandInteraction) {
 	const count = interaction.options.get('count')?.value as number;
 
 	const userService = new UserService(interaction.user.id);
+	await interaction.deferReply();
 	const data = await userService.getAggregatedRuns(period, count);
 
 	registerFont("./assets/CourierPrime-Regular.ttf", { family: "Courier" })
@@ -81,7 +82,7 @@ export async function execute(interaction: CommandInteraction) {
 
 	const chart = await createChart(chartInput);
 
-	return interaction.reply({ files: [chart] });
+	return interaction.editReply({ files: [chart] });
 }
 
 async function createChart(chartData: ChartInput) {
